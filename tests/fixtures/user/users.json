@@ -1,0 +1,26 @@
+[{
+    "_id": "5a5ea8fde43c771e4aa5ea06",
+  "firstName": "Pedro",
+  "lastName": "García",
+  "email": "pedro.garcia@example.com",
+  "phoneNumber": 23435626,
+  "address": "Loyda 314",
+  "city": "Barcelona",
+  "state": "Cataluña",
+  "zipCode": "21043",
+  "country": "Spain",
+  "__v": 0
+  },
+  {
+     "_id": "5a5ea8fde43c771e4aa5ea07",
+  "firstName": "Juan",
+  "lastName": "Sánchez",
+  "email": "jaun.sanchez@example.com",
+  "phoneNumber": 23435626,
+  "address": "Paseo de Gracia 412",
+  "city": "Barcelona",
+  "state": "Cataluña",
+  "zipCode": "21043",
+  "country": "Spain",
+  "__v": 0
+  }]

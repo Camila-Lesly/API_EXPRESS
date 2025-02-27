@@ -1,0 +1,11 @@
+{ 
+  "firstName": "Pedro",
+  "lastName": "García",
+  "email": "pedro.garcia@example.com",
+  "phoneNumber": 23435626,
+  "address": "Loyda 314",
+  "city": "Barcelona",
+  "state": "Cataluña",
+  "zipCode": "21043",
+  "country": "Spain"
+}
