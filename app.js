@@ -8,7 +8,7 @@ var app = express();
 
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 
-var UserController = require('./modules/user/user.module')().UserController;
+var AuthController = require('./modules/auth/auth.module')().AuthController;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 MongoDBUtil.init();
 
-app.use('/users', UserController);
+app.use('/api/auth', AuthController);
 
 app.get('/', function (req, res) {
     var pkg = require(path.join(__dirname, 'package.json'));
