@@ -13,6 +13,26 @@ function validateRegisterData(req, res, next) {
         if (!firstName || !email || !password) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                message: 'La contraseña debe tener al menos 6 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial.'
+            });
+        }
+
+        if (password.length > 20) {
+            return res.status(400).json({
+                message: 'La contraseña no puede exceder los 20 caracteres.'
+            });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                message: 'Las contraseñas no coinciden.'
+            });
+        }
+
         next();
 }
 
