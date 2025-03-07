@@ -7,10 +7,11 @@
     };
    
     var AuthService = require('./auth.module')().AuthService;
+    var validator = require('validator');
 
 function validateRegisterData(req, res, next) {
-        const { firstName, email, password } = req.body;
-        if (!firstName || !email || !password) {
+        const { firstName, lastName, email, password } = req.body;
+        if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
 
@@ -20,6 +21,11 @@ function validateRegisterData(req, res, next) {
                 message: 'La contraseña debe tener al menos 6 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial.'
             });
         }
+
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ message: 'El correo electrónico no es válido.' });
+        }
+
 
         if (password.length > 20) {
             return res.status(400).json({
