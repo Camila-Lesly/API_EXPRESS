@@ -1,17 +1,20 @@
-;(function () {
-  'use strict'
+(function () {
+    'use strict'
 
     module.exports = {
         validateRegisterData: validateRegisterData,
         updateUser: updateUser,
+        getUser: getUser,
         loginUser: loginUser,
-        deleteProfile: deleteProfile
+        deleteProfile: deleteProfile,
+        guardLogin: guardLogin
     };
 
+    var jwt = require('jsonwebtoken');
     var AuthService = require('./auth.module')().AuthService;
     var validator = require('validator');
 
-function validateRegisterData(req, res, next) {
+    function validateRegisterData(req, res, next) {
         const { firstName, lastName, email, password } = req.body;
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
@@ -42,39 +45,43 @@ function validateRegisterData(req, res, next) {
         }
 
         next();
-}
-
-    function updateUser(req, res, next) {
-        AuthService.updateUser(req.params.userId, req.body)
-            .then(success)
-            .catch(error);
-
-  async function updateUser(req, res, next) {
-    try {
-      const data = await AuthService.updateUser(req.params.userId, req.body)
-      req.response = data
-      next()
-    } catch (err) {
-      err.status = err.status || 500
-      next(err)
     }
-  }
 
-  async function deleteProfile(req, res, next) {
-    try {
-      // For now, get userId directly from params instead of JWT token
-      const userId = req.params.userId
-      const data = await AuthService.deleteProfile(userId)
-      req.response = data
-      next()
-    } catch (err) {
-      err.status = err.status || 500
-      next(err)
+    async function updateUser(req, res, next) {
+        try {
+            const data = await AuthService.updateUser(req.userId, req.body)
+            req.response = data
+            next()
+        } catch (err) {
+            err.status = err.status || 500
+            next(err)
+        }
     }
-  }
-})()
 
-  function loginUser(req, res, next) {
+    async function getUser(req, res, next) {
+        try {
+            const data = await AuthService.getUser(req.userId)
+            req.user = data
+            next()
+        } catch (err) {
+            err.status = err.status || 500
+            next(err)
+        }
+    }
+
+    async function deleteProfile(req, res, next) {
+        try {
+            const userId = req.userId
+            const data = await AuthService.deleteProfile(userId)
+            req.response = data
+            next()
+        } catch (err) {
+            err.status = err.status || 500
+            next(err)
+        }
+    }
+
+    function loginUser(req, res, next) {
         var { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: "Email y contraseña son requeridos" });
@@ -94,14 +101,20 @@ function validateRegisterData(req, res, next) {
         }
     }
 
-})();
+    function guardLogin(req, res, next) {
+        const token = req.headers.authorization;
+        if (!token) {
+            return res.status(401).json({ message: 'Token no proporcionado' });
+        }
 
-const validateLogin = (req, res, next) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email y contraseña son requeridos" });
+        jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ message: 'Token inválido' });
+            }
+
+            req.userId = decoded.id;
+            next();
+        });
     }
-    next();
-};
 
-module.exports = { validateLogin };
+})();

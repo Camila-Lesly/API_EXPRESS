@@ -1,10 +1,10 @@
-;(function () {
-  'use strict'
+(function () {
+    'use strict'
 
     var bcrypt = require('bcrypt');
     var jwt = require('jsonwebtoken');
     var UserModel = require('./auth.module')().UserModel;
-    var config = require('../config'); // Archivo donde tengas tu SECRET_KEY
+    var SECRET_KEY = require('../../config/config').SECRET_KEY;
 
     module.exports = {
         registerUser: registerUser,
@@ -30,7 +30,7 @@
         if (existingUser) {
             throw new Error('El email ya está en uso');
         }
-        userData.password = hashPassword(userData.password); 
+        userData.password = hashPassword(userData.password);
         var newUser = new UserModel(userData);
         return newUser.save();
     }
@@ -50,25 +50,25 @@
                 if (!user || !comparePassword(password, user.password)) {
                     throw new Error('Credenciales inválidas');
                 }
-                var token = jwt.sign({ id: user._id, email: user.email }, config.SECRET_KEY, { expiresIn: '1h' });
+                var token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
                 return { token, user };
             });
     }
-  
+
     function deleteProfile(userId) {
-      return UserModel.findByIdAndDelete(userId)
-        .exec()
-        .then(deletedUser => {
-          if (!deletedUser) {
-            const error = new Error('User not found')
-            error.status = 404
-            throw error
-          }
-          return {
-            message: 'Profile deleted successfully',
-            user: deletedUser
-          }
-        })
+        return UserModel.findByIdAndDelete(userId)
+            .exec()
+            .then(deletedUser => {
+                if (!deletedUser) {
+                    const error = new Error('User not found')
+                    error.status = 404
+                    throw error
+                }
+                return {
+                    message: 'Profile deleted successfully',
+                    user: deletedUser
+                }
+            })
     }
 
     function hashPassword(password) {

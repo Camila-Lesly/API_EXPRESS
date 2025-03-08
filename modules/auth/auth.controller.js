@@ -16,21 +16,15 @@
         }
     });
 
-    router.get('/profile', AuthMiddleware.readToken, async (req, res) => {
-        try {
-            const user = await authService.getUserById();
-    
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-            
-            res.json(user);
-        } catch (error) {
-            res.status(500).json({ message: 'Error en el servidor' });SSS
-        }
-    });
+    router.get('/profile', 
+        AuthMiddleware.guardLogin,
+        AuthMiddleware.getUser,
+        function (req, res) {
+            res.status(200).json(req.user);
+        });
 
     router.patch('/profile',
+        AuthMiddleware.guardLogin,
         AuthMiddleware.updateUser,
         function (req, res) {
             res.status(200).json(req.response);
@@ -41,15 +35,14 @@
         function (req, res) {
             res.status(200).json(req.response);
         });
+    
+    router.delete('/profile',
+        AuthMiddleware.guardLogin,
+        AuthMiddleware.deleteProfile,
+        function (req, res) {
+            res.status(200).json(req.response);
+        });
 
     module.exports = router;
 
 })();
-
-
-
-
-    
- 
-    
-
