@@ -1,11 +1,23 @@
+const { readToken } = require('./auth.middleware');
+
 (function () {
     'use strict';
 
     module.exports = {
-        updateUser: updateUser
+        updateUser: updateUser,
+        getUserById: getUserById
     };
 
     var UserModel = require('./auth.module')().UserModel;
+
+
+    async function getUserById (id){
+        try {
+            return await User.findById(id).select('-password');
+        } catch (error) {
+            return null;
+        }
+    }
 
     function updateUser(userId, user) {
         if (user.password) {
