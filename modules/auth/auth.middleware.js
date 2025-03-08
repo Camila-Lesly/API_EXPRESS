@@ -1,10 +1,11 @@
-(function () {
-    'use strict';
+;(function () {
+  'use strict'
 
     module.exports = {
         validateRegisterData: validateRegisterData,
         updateUser: updateUser,
-        loginUser: loginUser
+        loginUser: loginUser,
+        deleteProfile: deleteProfile
     };
 
     var AuthService = require('./auth.module')().AuthService;
@@ -48,17 +49,32 @@ function validateRegisterData(req, res, next) {
             .then(success)
             .catch(error);
 
-        function success(data) {
-            req.response = data;
-            next();
-        }
-
-        function error(err) {
-            next(err);
-        }
+  async function updateUser(req, res, next) {
+    try {
+      const data = await AuthService.updateUser(req.params.userId, req.body)
+      req.response = data
+      next()
+    } catch (err) {
+      err.status = err.status || 500
+      next(err)
     }
+  }
 
-    function loginUser(req, res, next) {
+  async function deleteProfile(req, res, next) {
+    try {
+      // For now, get userId directly from params instead of JWT token
+      const userId = req.params.userId
+      const data = await AuthService.deleteProfile(userId)
+      req.response = data
+      next()
+    } catch (err) {
+      err.status = err.status || 500
+      next(err)
+    }
+  }
+})()
+
+  function loginUser(req, res, next) {
         var { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: "Email y contraseña son requeridos" });

@@ -1,5 +1,5 @@
-(function () {
-    'use strict';
+;(function () {
+  'use strict'
 
     var bcrypt = require('bcrypt');
     var jwt = require('jsonwebtoken');
@@ -9,7 +9,8 @@
     module.exports = {
         registerUser: registerUser,
         updateUser: updateUser,
-        loginUser: loginUser
+        loginUser: loginUser,
+        deleteProfile: deleteProfile
     };
 
     var bcrypt = require('bcryptjs');
@@ -43,6 +44,22 @@
                 var token = jwt.sign({ id: user._id, email: user.email }, config.SECRET_KEY, { expiresIn: '1h' });
                 return { token, user };
             });
+    }
+  
+    function deleteProfile(userId) {
+      return UserModel.findByIdAndDelete(userId)
+        .exec()
+        .then(deletedUser => {
+          if (!deletedUser) {
+            const error = new Error('User not found')
+            error.status = 404
+            throw error
+          }
+          return {
+            message: 'Profile deleted successfully',
+            user: deletedUser
+          }
+        })
     }
 
     function hashPassword(password) {
