@@ -4,7 +4,6 @@
     var express = require('express');
     var bcrypt = require('bcryptjs');
     var router = express.Router();
-
     var AuthMiddleware = require('./auth.module')().AuthMiddleware;
     var AuthService = require('./auth.module')().AuthService;
 
@@ -21,7 +20,12 @@
         AuthMiddleware.updateUser,
         function (req, res) {
             res.status(200).json(req.response);
-            
+        });
+
+    router.post('/login',
+        AuthMiddleware.loginUser,
+        function (req, res) {
+            res.status(200).json(req.response);
         });
 
     module.exports = router;
