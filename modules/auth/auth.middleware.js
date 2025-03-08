@@ -1,38 +1,86 @@
-(function () {
-    'use strict';
+;(function () {
+  'use strict'
 
     module.exports = {
+        validateRegisterData: validateRegisterData,
         updateUser: updateUser,
-        readToken: readToken
+        loginUser: loginUser,
+        deleteProfile: deleteProfile
     };
-   
+
     var AuthService = require('./auth.module')().AuthService;
+    var validator = require('validator');
 
-function readToken(req,res,next){
-    
-        const token = req.header('Authorization');
-
-        
-        if (!token) {
-            return res.status(401).json({ message: 'Acceso denegado. No hay token.' });
+function validateRegisterData(req, res, next) {
+        const { firstName, lastName, email, password } = req.body;
+        if (!firstName || !lastName || !email || !password) {
+            return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
 
-        try {
-            
-            const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET);
-            
-            
-            req.user = decoded;
-            next(); 
-        } catch (error) {
-            res.status(401).json({ message: 'Token inválido.' });
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                message: 'La contraseña debe tener al menos 6 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial.'
+            });
+        }
+
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ message: 'El correo electrónico no es válido.' });
         }
 
 
-    }
+        if (password.length > 20) {
+            return res.status(400).json({
+                message: 'La contraseña no puede exceder los 20 caracteres.'
+            });
+        }
 
-function updateUser(req, res, next) {
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                message: 'Las contraseñas no coinciden.'
+            });
+        }
+
+        next();
+}
+
+    function updateUser(req, res, next) {
         AuthService.updateUser(req.params.userId, req.body)
+            .then(success)
+            .catch(error);
+
+  async function updateUser(req, res, next) {
+    try {
+      const data = await AuthService.updateUser(req.params.userId, req.body)
+      req.response = data
+      next()
+    } catch (err) {
+      err.status = err.status || 500
+      next(err)
+    }
+  }
+
+  async function deleteProfile(req, res, next) {
+    try {
+      // For now, get userId directly from params instead of JWT token
+      const userId = req.params.userId
+      const data = await AuthService.deleteProfile(userId)
+      req.response = data
+      next()
+    } catch (err) {
+      err.status = err.status || 500
+      next(err)
+    }
+  }
+})()
+
+  function loginUser(req, res, next) {
+        var { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email y contraseña son requeridos" });
+        }
+
+        AuthService.loginUser(email, password)
             .then(success)
             .catch(error);
 
@@ -42,10 +90,18 @@ function updateUser(req, res, next) {
         }
 
         function error(err) {
-            next(err);
+            res.status(401).json({ message: "Credenciales inválidas" });
         }
     }
 
 })();
 
+const validateLogin = (req, res, next) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email y contraseña son requeridos" });
+    }
+    next();
+};
 
+module.exports = { validateLogin };

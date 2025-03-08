@@ -1,15 +1,14 @@
-(function () {
-    'use strict';
+;(function () {
+  'use strict'
 
-    module.exports = init;
+  module.exports = init
 
-    function init() {
-        return {
-            AuthController: requirauth.e('./controller'),
-            AuthMiddleware: require('./auth.middleware'),
-            AuthService: require('./auth.service'),
-            AuthModel: require('./auth.model')
-        }
+  function init() {
+    return {
+      AuthController: require('./auth.controller'),
+      AuthMiddleware: require('./auth.middleware'),
+      AuthService: require('./auth.service'),
+      AuthModel: require('./auth.model')
     }
-
-})();
+  }
+})()
