@@ -1,41 +1,73 @@
 ;(function () {
   'use strict'
 
-  module.exports = {
-    updateUser: updateUser,
-    deleteProfile: deleteProfile
-  }
+    var bcrypt = require('bcrypt');
+    var jwt = require('jsonwebtoken');
+    var UserModel = require('./auth.module')().UserModel;
+    var config = require('../config'); // Archivo donde tengas tu SECRET_KEY
 
-  var UserModel = require('./auth.module')().UserModel
+    module.exports = {
+        registerUser: registerUser,
+        updateUser: updateUser,
+        loginUser: loginUser,
+        deleteProfile: deleteProfile
+    };
 
-  function updateUser(userId, user) {
-    if (user.password) {
-      user.password = hashPassword(user.password)
+    var bcrypt = require('bcryptjs');
+    var UserModel = require('./auth.module')().UserModel;
+
+    async function registerUser(userData) {
+        var existingUser = await UserModel.findOne({ email: userData.email });
+        if (existingUser) {
+            throw new Error('El email ya está en uso');
+        }
+        userData.password = hashPassword(userData.password); 
+        var newUser = new UserModel(userData);
+        return newUser.save();
     }
-    return UserModel.findByIdAndUpdate(userId, user, { new: true }).exec()
-  }
 
-  function deleteProfile(userId) {
-    return UserModel.findByIdAndDelete(userId)
-      .exec()
-      .then(deletedUser => {
-        if (!deletedUser) {
-          const error = new Error('User not found')
-          error.status = 404
-          throw error
+    function updateUser(userId, user) {
+        if (user.password) {
+            user.password = hashPassword(user.password);
         }
-        return {
-          message: 'Profile deleted successfully',
-          user: deletedUser
-        }
-      })
-  }
-})()
+        return UserModel
+            .findByIdAndUpdate(userId, user, { new: true })
+            .exec();
+    }
 
-function hashPassword(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
-}
+    function loginUser(email, password) {
+        return UserModel.findOne({ email }).exec()
+            .then(user => {
+                if (!user || !comparePassword(password, user.password)) {
+                    throw new Error('Credenciales inválidas');
+                }
+                var token = jwt.sign({ id: user._id, email: user.email }, config.SECRET_KEY, { expiresIn: '1h' });
+                return { token, user };
+            });
+    }
+  
+    function deleteProfile(userId) {
+      return UserModel.findByIdAndDelete(userId)
+        .exec()
+        .then(deletedUser => {
+          if (!deletedUser) {
+            const error = new Error('User not found')
+            error.status = 404
+            throw error
+          }
+          return {
+            message: 'Profile deleted successfully',
+            user: deletedUser
+          }
+        })
+    }
 
-function comparePassword(password, hash) {
-  return bcrypt.compareSync(password, hash)
-}
+    function hashPassword(password) {
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    }
+
+    function comparePassword(password, hash) {
+        return bcrypt.compareSync(password, hash);
+    }
+
+})();
