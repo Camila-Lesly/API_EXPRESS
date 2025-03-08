@@ -10,11 +10,20 @@
         registerUser: registerUser,
         updateUser: updateUser,
         loginUser: loginUser,
-        deleteProfile: deleteProfile
+        deleteProfile: deleteProfile,
+        getUser: getUser
     };
 
     var bcrypt = require('bcryptjs');
     var UserModel = require('./auth.module')().UserModel;
+
+    async function getUser(id) {
+        try {
+            return await User.findById(id).select('-password');
+        } catch (error) {
+            return null;
+        }
+    }
 
     async function registerUser(userData) {
         var existingUser = await UserModel.findOne({ email: userData.email });
