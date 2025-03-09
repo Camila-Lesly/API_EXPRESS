@@ -10,10 +10,27 @@ var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 
 var AuthController = require('./modules/auth/auth.module')().AuthController;
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'APIExpress',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./modules/auth/*controller.js'],
+};
+const swaggerSpec = swaggerJsdoc(options);
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 MongoDBUtil.init();
 
