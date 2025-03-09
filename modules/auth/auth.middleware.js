@@ -13,10 +13,11 @@
     var jwt = require('jsonwebtoken');
     var AuthService = require('./auth.module')().AuthService;
     var validator = require('validator');
+    var SECRET_KEY = require('../../config/config').SECRET_KEY;
 
     function validateRegisterData(req, res, next) {
-        const { firstName, lastName, email, password } = req.body;
-        if (!firstName || !lastName || !email || !password) {
+        const { firstName, lastName, email, password, confirmPassword } = req.body;
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
 
@@ -102,12 +103,13 @@
     }
 
     function guardLogin(req, res, next) {
-        const token = req.headers.authorization;
+        const authHeader = req.headers.authorization;
+        const token = authHeader && authHeader.split(' ')[1];
         if (!token) {
             return res.status(401).json({ message: 'Token no proporcionado' });
         }
 
-        jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+        jwt.verify(token, SECRET_KEY, (err, decoded) => {
             if (err) {
                 return res.status(401).json({ message: 'Token inválido' });
             }

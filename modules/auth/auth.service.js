@@ -19,7 +19,7 @@
 
     async function getUser(id) {
         try {
-            return await User.findById(id).select('-password');
+            return await UserModel.findById(id).select('-password');
         } catch (error) {
             return null;
         }
@@ -51,6 +51,8 @@
                     throw new Error('Credenciales inválidas');
                 }
                 var token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+                user = user.toObject();
+                delete user.password;
                 return { token, user };
             });
     }
@@ -64,6 +66,9 @@
                     error.status = 404
                     throw error
                 }
+
+                deletedUser = deletedUser.toObject()
+                delete deletedUser.password
                 return {
                     message: 'Profile deleted successfully',
                     user: deletedUser

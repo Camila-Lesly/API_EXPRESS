@@ -8,7 +8,7 @@
       AuthController: require('./auth.controller'),
       AuthMiddleware: require('./auth.middleware'),
       AuthService: require('./auth.service'),
-      AuthModel: require('./auth.model')
+      UserModel: require('./auth.model')
     }
   }
 })()
