@@ -6,10 +6,10 @@
     var router = express.Router();
     var AuthMiddleware = require('./auth.module')().AuthMiddleware;
     var AuthService = require('./auth.module')().AuthService;
-
+    var ProductService = require('../auth/producto.service');
     /**
      * @swagger
-     * components:
+     * components:  
      *   securitySchemes:
      *     bearerAuth:
      *       type: http
@@ -161,6 +161,57 @@
         function (req, res) {
             res.status(200).json(req.response);
         });
+
+            /**
+     * @swagger
+     * /api/products:
+     *   get:
+     *     summary: Obtiene todos los productos
+     *     tags: [Products]
+     *     responses:
+     *       200:
+     *         description: Lista de productos
+     */
+    router.get('/products', async function (req, res, next) {
+        try {
+            const products = await ProductService.getAllProducts();
+            res.status(200).json(products);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    /**
+     * @swagger
+     * /api/products/{id}:
+     *   get:
+     *     summary: Obtiene un producto por su ID
+     *     tags: [Products]
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Detalles del producto
+     *       404:
+     *         description: Producto no encontrado
+     */
+    router.get('/products/:id', async function (req, res, next) {
+        const { id } = req.params;
+        try {
+            const product = await ProductService.getProductById(id);
+            if (!product) {
+                return res.status(404).json({ message: 'Producto no encontrado' });
+            }
+            res.status(200).json(product);
+        } catch (err) {
+            next(err);
+        }
+    });
+
 
     module.exports = router;
 
