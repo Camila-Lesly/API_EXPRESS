@@ -1,26 +1,60 @@
-// services/product.service.js
-const ProductModel = require('../models/product.model'); // Asumiendo que tienes un modelo de producto para la base de datos
+(function () {
+    'use strict'
 
-class ProductService {
-    // Obtener todos los productos
-    static async getAllProducts() {
+    var jwt = require('jsonwebtoken');
+    var ProductModel = require('./product.module')().ProductModel;
+
+    module.exports = {
+        createProduct: createProduct,
+        updateProduct: updateProduct,
+        getProduct: getProduct,
+        getProducts: getProducts,
+        deleteProduct: deleteProduct
+    };
+
+    async function getProducts(userId) {
         try {
-            const products = await ProductModel.find();  // Aquí asumo que usas algo como MongoDB con Mongoose
-            return products;
-        } catch (err) {
-            throw new Error('Error al obtener los productos');
+            return await ProductModel.find({ owner: userId });
+        } catch (error) {
+            return null;
         }
     }
 
-    // Obtener un producto por su ID
-    static async getProductById(id) {
+    async function getProduct(id) {
         try {
-            const product = await ProductModel.findById(id);  // Asumiendo que usas MongoDB con Mongoose
-            return product;
-        } catch (err) {
-            throw new Error('Error al obtener el producto');
+            return await ProductModel.findById(id).select('-owner');
+        } catch (error) {
+            return null;
         }
     }
-}
 
-module.exports = ProductService;
+    async function createProduct(productData) {
+        var newProduct = new ProductModel(productData);
+        return newProduct.save();
+    }
+
+    function updateProduct(productId, product) {
+        return ProductModel
+            .findByIdAndUpdate(productId, product, { new: true })
+            .exec();
+    }
+
+    function deleteProduct(productId) {
+        return ProductModel.findByIdAndDelete(productId)
+            .exec()
+            .then(deletedProduct => {
+                if (!deletedProduct) {
+                    const error = new Error('Product not found')
+                    error.status = 404
+                    throw error
+                }
+
+                deletedProduct = deletedProduct.toObject()
+                delete deletedProduct.owner
+                return {
+                    message: 'Product deleted successfully',
+                    product: deletedProduct
+                }
+            })
+    }
+})();

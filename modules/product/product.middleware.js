@@ -2,55 +2,49 @@
     'use strict'
 
     module.exports = {
-        validateRegisterData: validateRegisterData,
-        updateUser: updateUser,
-        getUser: getUser,
-        loginUser: loginUser,
-        deleteProfile: deleteProfile,
-        guardLogin: guardLogin
+        validateProductData: validateProductData,
+        validateUserOwnsProduct: validateUserOwnsProduct,
+        updateProduct: updateProduct,
+        getProduct: getProduct,
+        getProducts: getProducts,
+        deleteProduct: deleteProduct,
     };
 
-    var jwt = require('jsonwebtoken');
-    var AuthService = require('./auth.module')().AuthService;
-    var validator = require('validator');
-    var SECRET_KEY = require('../../config/config').SECRET_KEY;
+    var ProductService = require('./product.module')().ProductService;
 
-    function validateRegisterData(req, res, next) {
-        const { firstName, lastName, email, password, confirmPassword } = req.body;
-        if (!firstName || !lastName || !email || !password || !confirmPassword) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-        }
-
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-        if (!passwordRegex.test(password)) {
-            return res.status(400).json({
-                message: 'La contraseña debe tener al menos 6 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial.'
-            });
-        }
-
-        if (!validator.isEmail(email)) {
-            return res.status(400).json({ message: 'El correo electrónico no es válido.' });
-        }
-
-
-        if (password.length > 20) {
-            return res.status(400).json({
-                message: 'La contraseña no puede exceder los 20 caracteres.'
-            });
-        }
-
-        if (password !== confirmPassword) {
-            return res.status(400).json({
-                message: 'Las contraseñas no coinciden.'
-            });
+    function validateProductData(req, res, next) {
+        const { name, description, price } = req.body;
+        if (!name || !description || !price) {
+            return res.status(400).json({ message: 'Los campos nombre, descripción y precio son obligatorios.' });
         }
 
         next();
     }
 
-    async function updateUser(req, res, next) {
+    function validateUserOwnsProduct(req, res, next) {
+        const userId = req.userId;
+        const productId = req.params.id;
+        ProductService.getProduct(productId)
+            .then(product => {
+                if (!product) {
+                    return res.status(404).json({ message: 'Producto no encontrado.' });
+                }
+
+                if (product.owner != userId) {
+                    return res.status(403).json({ message: 'No tienes permiso para realizar esta acción.' });
+                }
+
+                next();
+            })
+            .catch(err => {
+                next(err);
+            });
+    }
+
+    async function updateProduct(req, res, next) {
         try {
-            const data = await AuthService.updateUser(req.userId, req.body)
+            req.body.owner = req.userId
+            const data = await ProductService.updateProduct(req.userId, req.body)
             req.response = data
             next()
         } catch (err) {
@@ -59,10 +53,10 @@
         }
     }
 
-    async function getUser(req, res, next) {
+    async function getProduct(req, res, next) {
         try {
-            const data = await AuthService.getUser(req.userId)
-            req.user = data
+            const data = await ProductService.getProduct(req.params.id)
+            req.product = data
             next()
         } catch (err) {
             err.status = err.status || 500
@@ -70,10 +64,9 @@
         }
     }
 
-    async function deleteProfile(req, res, next) {
+    async function deleteProduct(req, res, next) {
         try {
-            const userId = req.userId
-            const data = await AuthService.deleteProfile(userId)
+            const data = await ProductService.deleteProduct(req.params.id)
             req.response = data
             next()
         } catch (err) {
@@ -82,41 +75,14 @@
         }
     }
 
-    function loginUser(req, res, next) {
-        var { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email y contraseña son requeridos" });
-        }
-
-        AuthService.loginUser(email, password)
-            .then(success)
-            .catch(error);
-
-        function success(data) {
-            req.response = data;
-            next();
-        }
-
-        function error(err) {
-            res.status(401).json({ message: "Credenciales inválidas" });
-        }
-    }
-
-    function guardLogin(req, res, next) {
-        const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ message: 'Token no proporcionado' });
-        }
-
-        jwt.verify(token, SECRET_KEY, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: 'Token inválido' });
-            }
-
-            req.userId = decoded.id;
-            next();
-        });
+    function getProducts(req, res, next) {
+        ProductService.getProducts(req.userId)
+            .then(products => {
+                res.status(200).json(products);
+            })
+            .catch(err => {
+                next(err);
+            });
     }
 
 })();
