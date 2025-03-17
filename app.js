@@ -9,6 +9,7 @@ var app = express();
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 
 var AuthController = require('./modules/auth/auth.module')().AuthController;
+var ProductController = require('./modules/product/product.module')().ProductController;
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -21,7 +22,7 @@ const options = {
       version: '1.0.0',
     },
   },
-  apis: ['./modules/auth/*controller.js'],
+  apis: ['./modules/auth/*controller.js','./modules/product/*controller.js'],
 };
 const swaggerSpec = swaggerJsdoc(options);
 
@@ -35,6 +36,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 MongoDBUtil.init();
 
 app.use('/api/auth', AuthController);
+app.use('/api/product', ProductController);
 
 app.get('/', function (req, res) {
     var pkg = require(path.join(__dirname, 'package.json'));
