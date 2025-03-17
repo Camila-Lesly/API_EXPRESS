@@ -2,10 +2,10 @@
     'use strict';
 
     var express = require('express');
-    var bcrypt = require('bcryptjs');
     var router = express.Router();
-    var AuthMiddleware = require('./auth.module')().AuthMiddleware;
-    var ProductService = require('../auth/producto.service');
+    var AuthMiddleware = require('../auth/auth.module')().AuthMiddleware;
+    var ProductMiddleware = require('./product.module')().ProductMiddleware;
+    var ProductService = require('./product.module')().ProductService;
     /**
      * @swagger
      * components:  
@@ -26,14 +26,11 @@
      *       200:
      *         description: Lista de productos
      */
-    router.get('/product', async function (req, res, next) {
-        try {
-            const products = await ProductService.getAllProducts();
-            res.status(200).json(products);
-        } catch (err) {
-            next(err);
-        }
-    });
+    router.get('/product', AuthMiddleware.guardLogin,
+        ProductMiddleware.getProducts,
+        function (req, res) {
+            res.status(200).json(req.response);
+        });
 
     /**
      * @swagger
@@ -53,25 +50,19 @@
      *       404:
      *         description: Producto no encontrado
      */
-    router.get('/product/:id', async function (req, res, next) {
-        const { id } = req.params;
-        try {
-            const product = await ProductService.getProductById(id);
-            if (!product) {
-                return res.status(404).json({ message: 'Producto no encontrado' });
-            }
-            res.status(200).json(product);
-        } catch (err) {
-            next(err);
-        }
-    });
+    router.get('/product/:id', AuthMiddleware.guardLogin, 
+        ProductMiddleware.validateUserOwnsProduct,
+        ProductMiddleware.getProduct,
+        function (req, res) {
+            res.status(200).json(req.response);
+        });
 
     /**
      * @swagger
      * /api/product:
      *   post:
-     *     summary: Registra un nuevo usuario
-     *     tags: [Auth]
+     *     summary: Crea un nuevo producto
+     *     tags: [Products]
      *     requestBody:
      *       required: true
      *       content:
@@ -84,7 +75,7 @@
      *       400:
      *         description: Error en los datos de registro
      */
-    router.post('/product', AuthMiddleware.guardLogin, async function (req, res, next) {
+    router.post('/product', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
         try {
             const user = await ProductService.re(req.body);
             res.status(201).json({ message: 'Usuario registrado exitosamente', user });
@@ -98,7 +89,7 @@
      * /api/product/:productId:
      *   patch:
      *     summary: Actualiza el perfil del usuario autenticado
-     *     tags: [Auth]
+     *     tags: [Products]
      *     security:
      *       - bearerAuth: []
      *     requestBody:
@@ -115,7 +106,9 @@
      */
     router.patch('/product/:productId',
         AuthMiddleware.guardLogin,
-        AuthMiddleware.updateUser,
+        ProductMiddleware.validateProductData,
+        ProductMiddleware.validateUserOwnsProduct,
+        ProductMiddleware.updateProduct,
         function (req, res) {
             res.status(200).json(req.response);
         });
@@ -138,18 +131,13 @@
      *       404:
      *         description: Producto no encontrado
      */
-    router.delete('/product/:id', async function (req, res, next) {
-        const { id } = req.params;
-        try {
-            const product = await ProductService.getProductById(id);
-            if (!product) {
-                return res.status(404).json({ message: 'Producto no encontrado' });
-            }
-            res.status(200).json(product);
-        } catch (err) {
-            next(err);
-        }
-    });
+    router.delete('/product/:id', 
+        AuthMiddleware.guardLogin, 
+        ProductMiddleware.validateUserOwnsProduct,
+        ProductMiddleware.deleteProduct, 
+        function (req, res) {
+            res.status(200).json(req.response);
+        });
 
 
     module.exports = router;

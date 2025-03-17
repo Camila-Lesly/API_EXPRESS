@@ -19,6 +19,11 @@
         image: {
             type: String,
         },
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: 'users',
+            required: true,
+        },
     });
 
     module.exports = mongoose.model('products', ProductSchema);
