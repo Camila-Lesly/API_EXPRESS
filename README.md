@@ -1,18 +1,43 @@
-# Hola a todos 
+# Ejecutar Swagger-Express
 
-## Por este medio se orienta la actividad colaborativa "Api-Express", a partir de una plantilla dada por el profesor. La actividad consiste en:
+## Acceder a la documentación de Swagger  
+Una vez que el servidor esté en ejecución, la documentación de la API estará disponible en:  
 
-1) Los equipos desarrollaran un api utilizando Express y MongoDb.
+[http://localhost:3000/api-docs/#/Products/post_api_product](http://localhost:3000/api-docs/#/Products/post_api_product)  
 
-2) Cada equipo debe tener su proyecto en GitHub para trabajar de forma colaborativa.
+## Instalación de dependencias  
+Antes de ejecutar el servidor, es necesario instalar las dependencias del proyecto con el siguiente comando:  
+npm install
 
-3) El proyecto debe utilizar las ramas de GitHub para conferir tareas a cada estudiante de forma individual. Dicho de otra forma, cada estudiante es responsable de una parte del proyecto y recibirá una nota por esa parte.
+Para ejecutarlo con:
+npm run start
 
-4) El proyecto debe incorporar todos los elementos dados en clases hasta el 27 de marzo. 
+# Requisitos del Frontend  
 
-5) La nota principal se centrará en el trabajo con la base de datos, colecciones, agregaciones, índices, relaciones, etc
-   (8 puntos)
-6) Se valorará también la inclusión de elementos avanzados de desarrollo, como utilización de css en vistas, interfaces gráficas y otros elementos de desarrollo aprendidos en otras asignaturas. Este contenido integrador se valorará con dos puntos adicionales.
-(2 puntos)
-7) La entrega del proyecto se realizará por el campus virtual  mediante un documento  .txt que contenga el enlace al proyecto en GitHub de forma tal que el profesor tenga los accesos para revisarlo en la plataforma del equipo. 
+## 1. Vista de Login  
+La aplicación debe contar con una vista de autenticación con los siguientes elementos:  
 
+### **Campos:**  
+- **Usuario** (input de texto)  
+- **Contraseña** (input de tipo password)  
+
+### **Funcionalidad:**  
+- Permitir al usuario ingresar sus credenciales.  
+- Si las credenciales son correctas, redirigir a la vista de la lista de productos.  
+- Manejar errores en caso de credenciales incorrectas.  
+
+---
+
+## 2. Vista de Lista de Productos  
+Debe permitir a los usuarios gestionar los productos con las siguientes acciones:  
+
+### **Funcionalidades:**  
+- **Ver la lista de productos** con su información relevante.  
+- **Crear nuevos productos**, ingresando datos como nombre, precio y descripción.  
+- **Editar productos existentes** modificando sus datos.  
+- **Eliminar productos** de la lista.  
+
+### **Consideraciones:**  
+- Mostrar los productos en una tabla o lista con opciones para editar y eliminar.  
+- Utilizar modales o formularios para la creación y edición de productos.  
+- Confirmar la eliminación antes de borrar un producto.  

@@ -6,6 +6,7 @@
     var AuthMiddleware = require('../auth/auth.module')().AuthMiddleware;
     var ProductMiddleware = require('./product.module')().ProductMiddleware;
     var ProductService = require('./product.module')().ProductService;
+
     /**
      * @swagger
      * components:  
@@ -14,6 +15,16 @@
      *       type: http
      *       scheme: bearer
      *       bearerFormat: JWT
+     *   schemas:
+     *     Product:
+     *       type: object
+     *       properties:
+     *         name:
+     *           type: string
+     *         price:
+     *           type: number
+     *         description:
+     *           type: string
      */
 
     /**
@@ -22,6 +33,8 @@
      *   get:
      *     summary: Obtiene todos los productos
      *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
      *     responses:
      *       200:
      *         description: Lista de productos
@@ -38,6 +51,8 @@
      *   get:
      *     summary: Obtiene un producto por su ID
      *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -63,17 +78,19 @@
      *   post:
      *     summary: Crea un nuevo producto
      *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
      *     requestBody:
      *       required: true
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/Register'
+     *             $ref: '#/components/schemas/Product'
      *     responses:
      *       201:
-     *         description: Usuario registrado exitosamente
+     *         description: Producto creado exitosamente
      *       400:
-     *         description: Error en los datos de registro
+     *         description: Error en los datos del producto
      */
     router.post('/product', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
         try {
@@ -86,23 +103,31 @@
 
     /**
      * @swagger
-     * /api/product/:productId:
+     * /api/product/{productId}:
      *   patch:
-     *     summary: Actualiza el perfil del usuario autenticado
+     *     summary: Actualiza un producto existente
      *     tags: [Products]
      *     security:
      *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: productId
+     *         required: true
+     *         schema:
+     *           type: string
      *     requestBody:
      *       required: true
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/Register'
+     *             $ref: '#/components/schemas/Product'
      *     responses:
      *       200:
-     *         description: Perfil actualizado correctamente
+     *         description: Producto actualizado correctamente
      *       401:
      *         description: No autorizado
+     *       404:
+     *         description: Producto no encontrado
      */
     router.patch('/product/:productId',
         AuthMiddleware.guardLogin,
@@ -117,8 +142,10 @@
      * @swagger
      * /api/product/{id}:
      *   delete:
-     *     summary: Obtiene un producto por su ID
+     *     summary: Elimina un producto por su ID
      *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -127,7 +154,7 @@
      *           type: string
      *     responses:
      *       200:
-     *         description: Detalles del producto
+     *         description: Producto eliminado exitosamente
      *       404:
      *         description: Producto no encontrado
      */
@@ -138,7 +165,6 @@
         function (req, res) {
             res.status(200).json(req.response);
         });
-
 
     module.exports = router;
 
