@@ -23,7 +23,6 @@
             type: Schema.Types.ObjectId,
             ref: 'users',
             required: true,
-            index: true,
         },
     });
 

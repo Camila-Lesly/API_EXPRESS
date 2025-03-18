@@ -6,7 +6,6 @@
     var AuthMiddleware = require('../auth/auth.module')().AuthMiddleware;
     var ProductMiddleware = require('./product.module')().ProductMiddleware;
     var ProductService = require('./product.module')().ProductService;
-
     /**
      * @swagger
      * components:  
@@ -15,16 +14,6 @@
      *       type: http
      *       scheme: bearer
      *       bearerFormat: JWT
-     *   schemas:
-     *     Product:
-     *       type: object
-     *       properties:
-     *         name:
-     *           type: string
-     *         price:
-     *           type: number
-     *         description:
-     *           type: string
      */
 
     /**
@@ -33,8 +22,6 @@
      *   get:
      *     summary: Obtiene todos los productos
      *     tags: [Products]
-     *     security:
-     *       - bearerAuth: []
      *     responses:
      *       200:
      *         description: Lista de productos
@@ -51,8 +38,6 @@
      *   get:
      *     summary: Obtiene un producto por su ID
      *     tags: [Products]
-     *     security:
-     *       - bearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
@@ -72,40 +57,84 @@
             res.status(200).json(req.response);
         });
 
-
     /**
      * @swagger
-     * /api/product/{productId}:
-     *   patch:
-     *     summary: Actualiza un producto existente
+     * /api/product:
+     *   post:
+     *     summary: Crea un nuevo producto
      *     tags: [Products]
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: productId
-     *         required: true
-     *         schema:
-     *           type: string
      *     requestBody:
      *       required: true
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/Product'
+     *             $ref: '#/components/schemas/Register'
+     *     responses:
+     *       201:
+     *         description: Usuario registrado exitosamente
+     *       400:
+     *         description: Error en los datos de registro
+     */
+    router.post('/product', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
+        try {
+            const user = await ProductService.re(req.body);
+            res.status(201).json({ message: 'Usuario registrado exitosamente', user });
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    /**
+     * @swagger
+     * /api/product/:productId:
+     *   patch:
+     *     summary: Actualiza el perfil del usuario autenticado
+     *     tags: [Products]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Register'
      *     responses:
      *       200:
-     *         description: Producto actualizado correctamente
+     *         description: Perfil actualizado correctamente
      *       401:
      *         description: No autorizado
-     *       404:
-     *         description: Producto no encontrado
      */
     router.patch('/product/:productId',
         AuthMiddleware.guardLogin,
         ProductMiddleware.validateProductData,
         ProductMiddleware.validateUserOwnsProduct,
         ProductMiddleware.updateProduct,
+        function (req, res) {
+            res.status(200).json(req.response);
+        });
+
+    /**
+     * @swagger
+     * /api/product/{id}:
+     *   delete:
+     *     summary: Obtiene un producto por su ID
+     *     tags: [Products]
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Detalles del producto
+     *       404:
+     *         description: Producto no encontrado
+     */
+    router.delete('/product/:id', 
+        AuthMiddleware.guardLogin, 
+        ProductMiddleware.validateUserOwnsProduct,
+        ProductMiddleware.deleteProduct, 
         function (req, res) {
             res.status(200).json(req.response);
         });

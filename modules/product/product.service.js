@@ -1,60 +1,87 @@
 (function () {
     'use strict'
 
+    var bcrypt = require('bcrypt');
     var jwt = require('jsonwebtoken');
-    var ProductModel = require('./product.module')().ProductModel;
+    var UserModel = require('./auth.module')().UserModel;
+    var SECRET_KEY = require('../../config/config').SECRET_KEY;
 
     module.exports = {
-        createProduct: createProduct,
-        updateProduct: updateProduct,
-        getProduct: getProduct,
-        getProducts: getProducts,
-        deleteProduct: deleteProduct
+        registerUser: registerUser,
+        updateUser: updateUser,
+        loginUser: loginUser,
+        deleteProfile: deleteProfile,
+        getUser: getUser
     };
 
-    async function getProducts(userId) {
+    var bcrypt = require('bcryptjs');
+    var UserModel = require('./auth.module')().UserModel;
+
+    async function getUser(id) {
         try {
-            return await ProductModel.find({ owner: userId });
+            return await UserModel.findById(id).select('-password');
         } catch (error) {
             return null;
         }
     }
 
-    async function getProduct(id) {
-        try {
-            return await ProductModel.findById(id).select('-owner');
-        } catch (error) {
-            return null;
+    async function registerUser(userData) {
+        var existingUser = await UserModel.findOne({ email: userData.email });
+        if (existingUser) {
+            throw new Error('El email ya está en uso');
         }
+        userData.password = hashPassword(userData.password);
+        var newUser = new UserModel(userData);
+        return newUser.save();
     }
 
-    async function createProduct(productData) {
-        var newProduct = new ProductModel(productData);
-        return newProduct.save();
-    }
-
-    function updateProduct(productId, product) {
-        return ProductModel
-            .findByIdAndUpdate(productId, product, { new: true })
+    function updateUser(userId, user) {
+        if (user.password) {
+            user.password = hashPassword(user.password);
+        }
+        return UserModel
+            .findByIdAndUpdate(userId, user, { new: true })
             .exec();
     }
 
-    function deleteProduct(productId) {
-        return ProductModel.findByIdAndDelete(productId)
+    function loginUser(email, password) {
+        return UserModel.findOne({ email }).exec()
+            .then(user => {
+                if (!user || !comparePassword(password, user.password)) {
+                    throw new Error('Credenciales inválidas');
+                }
+                var token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+                user = user.toObject();
+                delete user.password;
+                return { token, user };
+            });
+    }
+
+    function deleteProfile(userId) {
+        return UserModel.findByIdAndDelete(userId)
             .exec()
-            .then(deletedProduct => {
-                if (!deletedProduct) {
-                    const error = new Error('Product not found')
+            .then(deletedUser => {
+                if (!deletedUser) {
+                    const error = new Error('User not found')
                     error.status = 404
                     throw error
                 }
 
-                deletedProduct = deletedProduct.toObject()
-                delete deletedProduct.owner
+                deletedUser = deletedUser.toObject()
+                delete deletedUser.password
                 return {
-                    message: 'Product deleted successfully',
-                    product: deletedProduct
+                    message: 'Profile deleted successfully',
+                    user: deletedUser
                 }
             })
     }
+
+    function hashPassword(password) {
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    }
+
+    function comparePassword(password, hash) {
+        return bcrypt.compareSync(password, hash);
+    }
+
 })();
