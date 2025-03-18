@@ -72,34 +72,6 @@
             res.status(200).json(req.response);
         });
 
-    /**
-     * @swagger
-     * /api/product:
-     *   post:
-     *     summary: Crea un nuevo producto
-     *     tags: [Products]
-     *     security:
-     *       - bearerAuth: []
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             $ref: '#/components/schemas/Product'
-     *     responses:
-     *       201:
-     *         description: Producto creado exitosamente
-     *       400:
-     *         description: Error en los datos del producto
-     */
-    router.post('/product', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
-        try {
-            const user = await ProductService.re(req.body);
-            res.status(201).json({ message: 'Usuario registrado exitosamente', user });
-        } catch (err) {
-            next(err);
-        }
-    });
 
     /**
      * @swagger
@@ -138,33 +110,6 @@
             res.status(200).json(req.response);
         });
 
-    /**
-     * @swagger
-     * /api/product/{id}:
-     *   delete:
-     *     summary: Elimina un producto por su ID
-     *     tags: [Products]
-     *     security:
-     *       - bearerAuth: []
-     *     parameters:
-     *       - in: path
-     *         name: id
-     *         required: true
-     *         schema:
-     *           type: string
-     *     responses:
-     *       200:
-     *         description: Producto eliminado exitosamente
-     *       404:
-     *         description: Producto no encontrado
-     */
-    router.delete('/product/:id', 
-        AuthMiddleware.guardLogin, 
-        ProductMiddleware.validateUserOwnsProduct,
-        ProductMiddleware.deleteProduct, 
-        function (req, res) {
-            res.status(200).json(req.response);
-        });
 
     module.exports = router;
 
