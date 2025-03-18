@@ -1,13 +1,10 @@
 // src/App.js
-import React from 'react';
-import CustomButton from './components/Button';
+import React from "react";
+import Login from "./pages/Login";  // Importa el componente Login
 
 const App = () => {
   return (
-    <div>
-      <h1>Hola Mundo!</h1>
-      <CustomButton />
-    </div>
+    <Login />  // Renderiza directamente Login
   );
 };
 
