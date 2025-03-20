@@ -1,60 +1,48 @@
-import { 
-  Box, 
-  Button, 
-  Container, 
-  FormControl, 
-  FormLabel, 
-  Input, 
-  Stack, 
-  Heading, 
-  Text, 
-  Link, 
-  Flex, 
-  useColorModeValue 
-} from "@chakra-ui/react";
+
+import { Box, Button, Container, FormControl, FormLabel, Input, Stack, Heading, Text, Link, Flex } from "@chakra-ui/react";
+import "../assets/styles/loginStyle.scss";
+import logo from "../assets/icons/logo.png";
+import bg from "../assets/icons/background.jpg";
+
 
 const Login = () => {
   return (
-    <Flex
-      minH="100vh"
-      align="center"
-      justify="center"
-      bg="black"
-    >
-      <Container maxW="sm" py={12}>
-        <Box
-          p={8}
-          borderWidth={1}
-          borderRadius="lg"
-          boxShadow="2xl"
-          bg="rgba(20, 20, 20, 0.9)"
-          color="white"
-        >
-          <Heading size="lg" mb={6} textAlign="center" color="blue.400">
-            Bienvenido
+    <Flex className="login-container" align="center" justify="center" minH="100vh">
+      <Container maxW="md" className="login-box">
+        <Box p={5} borderRadius="sm" className="login-box-inner">
+          <Heading size="lg" className="login-heading" textAlign="center">
+            Merkly
           </Heading>
           <form>
             <Stack spacing={4}>
-              <FormControl id="email" isRequired>
-                <FormLabel color="gray.300">Email</FormLabel>
-                <Input type="email" placeholder="Ingresa tu email" bg="gray.800" borderColor="gray.600" _focus={{ borderColor: "blue.400" }} color="white" />
+              <FormControl id="email" isRequired className="form-control">
+                <FormLabel>Email*</FormLabel>
+                <Input type="email" placeholder="Ingresa tu email" className="input-field" />
               </FormControl>
-              <FormControl id="password" isRequired>
-                <FormLabel color="gray.300">Password</FormLabel>
-                <Input type="password" placeholder="Ingresa tu contraseña" bg="gray.800" borderColor="gray.600" _focus={{ borderColor: "blue.400" }} color="white" />
+              <FormControl id="password" isRequired className="form-control">
+                <FormLabel>Password*</FormLabel>
+                <Input type="password" placeholder="Ingresa tu contraseña" className="input-field" />
               </FormControl>
-              <Button bg="blue.500" _hover={{ bg: "blue.700" }} color="white" type="submit" width="full" mt={4}>
-                Iniciar sesión
+              <Button type="submit" width="full" className="button">
+                Iniciar Sesión
               </Button>
-              <Text textAlign="center" fontSize="sm" color="gray.300">
-                ¿No tienes cuenta? <Link color="blue.400" href="#">Regístrate</Link>
-              </Text>
             </Stack>
           </form>
+          <Text textAlign="center" fontSize="sm" className="register-text">
+            ¿No tienes cuenta? <Link href="#">Regístrate</Link>
+          </Text>
         </Box>
       </Container>
+      <Box className="logo-container">
+      {/* <img src={logo} alt="Merkly Logo" /> */}
+      </Box> 
+
+      {/* <Box className="footer">
+        <Text className="footer-text">merkly@gmail.com</Text>
+      </Box> */}
     </Flex>
   );
 };
 
 export default Login;
+
