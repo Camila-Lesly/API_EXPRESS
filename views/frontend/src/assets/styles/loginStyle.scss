@@ -16,7 +16,7 @@
   border-radius: 8px;
   overflow: hidden;
   border-color: black !important  ;
-  
+  padding: 0!important;
 }
 
 .login-box-inner {
@@ -76,7 +76,8 @@
 }
 
 .register-link {
-  color: blue !important; 
+  font-weight: 800;
+  color: white !important; 
   text-decoration: none;
   &:hover {
     text-decoration: underline;
