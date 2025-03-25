@@ -1,108 +1,112 @@
-$primary-color: #FF8C69;
-$button-color: #FFD700;
-$button-hover-color: #FFC107;
-$text-color: white;
-$input-bg: white;
-$input-border: gray;
-
-.css-1r001sk{
-  margin-inline-end: 0px !important;
-  width: stretch !important;
-  margin-inline-start: initial !important;
-}
-
 .login-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  height: 259px !important;
-  background-color: white;
-  padding-bottom: 80px;
+  min-height: 100vh;
+  position: relative;
+  
+
 }
 
 .login-box {
-  background-color: $primary-color;
+  display: flex;
+  max-width: 60rem !important; // Aumenta el tamaño máximo
+  width: 60% !important; // Ajusta el ancho relativo al contenedor
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  color: $text-color;
-  width: 24rem;
+  overflow: hidden;
+  border-color: black !important  ;
+  
+}
+
+.login-box-inner {
+  flex: 1;
+  padding: 1.5rem;
+  background-color: #266838;
+  color: white;
+  border-radius: 8px;
 }
 
 .login-heading {
+  font-family: 'Nixie One', sans-serif !important;
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-control {
-  margin-bottom: 1rem;
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    background: $input-bg;
-    color: black;
-    border: 1px solid $input-border;
-    border-radius: 4px;
-    &:focus {
-      border-color: $primary-color;
-    }
-  }
+  font-family: 'Nixie One', sans-serif !important;
+  display: flex;
+  flex-direction: column;
 }
 
-.button {
-  background-color: $button-color;
-  color: black;
-  padding: 0.75rem;
-  width: 100%;
-  border: none;
+.input-field {
+  background-color: #85A468 !important;
+  color: black !important;
+  padding: 0.5rem;
   border-radius: 4px;
-  cursor: pointer;
+  margin-bottom: 15px !important;
+}
+
+.input-field::placeholder {
+  color: black; /* El color que deseas para el placeholder */
+  font-size: 12px; /* Opcional: para cambiar el tamaño del texto del placeholder */
+}
+
+.button2 {
+  font-family: 'Nixie One', sans-serif;
+  font-size: 14px !important;
+  width: 60%;;
+  color: rgb(0, 0, 0) !important;
+  background-color: #88AD96 !important;
+  padding: 1rem;
+  display: flex;
+  margin-left: 60px !important;
+  border-radius: 4px;
+  transition: background-color 0.2s;
   &:hover {
-    background-color: $button-hover-color;
+    background-color: #d69e2e;
   }
 }
 
 .register-text {
+  font-family: 'Nixie One', sans-serif;
   text-align: center;
   font-size: 0.875rem;
   margin-top: 1rem;
-  a {
-    color: black;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
+}
+
+.register-link {
+  color: blue !important; 
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
   }
-}
-
-.footer {
-  width: 100%;
-  background-color: #f27c5f;
-  text-align: center;
-  padding: 10px 0;
-  position: absolute;
-  bottom: 0;
-}
-
-.footer-text {
-  color: white;
-  font-size: 14px;
 }
 
 .logo-container {
-  margin-left: 2rem;
-  position: relative;
-  img {
-    object-fit: contain;
-    height: 200px !important;
-    display: flex;
-    padding-right: 235px !important;
-    margin-left: 100px !important;
-  }
+  flex: 1.2 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem !important;
+}
 
-  
+.logo {
+  max-width: 100% !important  ;
+  height: auto;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #266838;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.footer-text {
+  font-family: 'Nixie One', sans-serif;
+  color: white;
+  font-size: 0.875rem;
 }

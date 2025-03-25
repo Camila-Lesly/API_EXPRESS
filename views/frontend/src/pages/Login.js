@@ -1,48 +1,72 @@
-
-import { Box, Button, Container, FormControl, FormLabel, Input, Stack, Heading, Text, Link, Flex } from "@chakra-ui/react";
+import { Box, Button, Container, FormControl, FormLabel, Input, Stack, Heading, Text, Link, Flex, Image } from "@chakra-ui/react";
 import "../assets/styles/loginStyle.scss";
-import logo from "../assets/icons/logo.png";
-import bg from "../assets/icons/background.jpg";
-
+import axios from "axios";
+import { useState } from "react";
+import logo from "../assets/icons/imagenReferencia.png";
 
 const Login = () => {
+  
+  // const Login = () => {
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+
+  // // Función para manejar el login
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     // Enviar la solicitud POST a la API de Express
+  //     const response = await axios.post("http://localhost:5000/api/auth/login", {
+  //       email,
+  //       password
+  //     });
+
+  //     // Aquí puedes guardar el JWT en el almacenamiento local o redirigir al usuario
+  //     console.log("Login exitoso:", response.data);
+
+  //     // Ejemplo: Guardar el JWT en el almacenamiento local
+  //     localStorage.setItem("token", response.data.token);
+
+  //     // Redirigir o realizar otras acciones
+  //   } catch (error) {
+  //     console.error("Error al iniciar sesión:", error.response ? error.response.data : error.message);
+  //   }
+  // };
+  
+  
+  
+  
   return (
-    <Flex className="login-container" align="center" justify="center" minH="100vh">
-      <Container maxW="md" className="login-box">
-        <Box p={5} borderRadius="sm" className="login-box-inner">
-          <Heading size="lg" className="login-heading" textAlign="center">
-            Merkly
-          </Heading>
+    <Flex className="login-container">
+      <Container maxW="lg" className="login-box">
+        <Box className="login-box-inner">
+          <Heading size="lg" className="login-heading">Merkly</Heading>
           <form>
             <Stack spacing={4}>
               <FormControl id="email" isRequired className="form-control">
-                <FormLabel>Email*</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <Input type="email" placeholder="Ingresa tu email" className="input-field" />
               </FormControl>
               <FormControl id="password" isRequired className="form-control">
-                <FormLabel>Password*</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <Input type="password" placeholder="Ingresa tu contraseña" className="input-field" />
               </FormControl>
-              <Button type="submit" width="full" className="button">
-                Iniciar Sesión
-              </Button>
+              <Button type="submit" className="button2">Iniciar Sesión</Button>
             </Stack>
           </form>
-          <Text textAlign="center" fontSize="sm" className="register-text">
-            ¿No tienes cuenta? <Link href="#">Regístrate</Link>
+          <Text className="register-text">
+            ¿No tienes cuenta? <Link href="#" className="register-link">Regístrate</Link>
           </Text>
         </Box>
+        <Box className="logo-container">
+          <Image src={logo} alt="Merkly Logo" className="logo" />
+        </Box>
       </Container>
-      <Box className="logo-container">
-      {/* <img src={logo} alt="Merkly Logo" /> */}
-      </Box> 
-
-      {/* <Box className="footer">
-        <Text className="footer-text">merkly@gmail.com</Text>
-      </Box> */}
+      <Box className="footer">
+        <Text className="footer-text">El caos es cambio, trae cambio al orden. </Text>
+      </Box>
     </Flex>
   );
-};
+}
 
 export default Login;
-
