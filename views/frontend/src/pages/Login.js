@@ -3,8 +3,10 @@ import "../assets/styles/loginStyle.scss";
 import axios from "axios";
 import { useState } from "react";
 import logo from "../assets/icons/imagenReferencia.png";
+import RegisterModal from "./RegisterModal";
 
 const Login = () => {
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   
   // const Login = () => {
   // const [email, setEmail] = useState("");
@@ -55,7 +57,7 @@ const Login = () => {
             </Stack>
           </form>
           <Text className="register-text">
-            ¿No tienes cuenta? <Link href="#" className="register-link">Regístrate</Link>
+            ¿No tienes cuenta? <Link href="#" className="register-link" onClick={() => setIsRegisterOpen(true)}> Regístrate</Link>
           </Text>
         </Box>
         <Box className="logo-container">
@@ -65,6 +67,7 @@ const Login = () => {
       <Box className="footer">
         <Text className="footer-text">El caos es cambio, trae cambio al orden. </Text>
       </Box>
+      <RegisterModal isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)} />
     </Flex>
   );
 }

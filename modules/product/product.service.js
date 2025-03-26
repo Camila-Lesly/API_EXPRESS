@@ -3,7 +3,7 @@
 
     var bcrypt = require('bcrypt');
     var jwt = require('jsonwebtoken');
-    var UserModel = require('./auth.module')().UserModel;
+    var UserModel = require('../auth/auth.module').UserModel;
     var SECRET_KEY = require('../../config/config').SECRET_KEY;
 
     module.exports = {
