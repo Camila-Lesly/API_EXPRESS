@@ -14,6 +14,17 @@ var ProductController = require('./modules/product/product.module')().ProductCon
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
+
+const cors = require('cors');
+
+// Configuración de CORS
+app.use(cors({
+  origin: 'http://localhost:3000',  // Cambia este valor si tu frontend corre en otro puerto
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 const options = {
   definition: {
     openapi: '3.0.0',

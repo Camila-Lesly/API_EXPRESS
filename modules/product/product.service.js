@@ -1,87 +1,57 @@
 (function () {
-    'use strict'
+    'use strict';
 
-    var bcrypt = require('bcrypt');
-    var jwt = require('jsonwebtoken');
-    var UserModel = require('../auth/auth.module').UserModel;
-    var SECRET_KEY = require('../../config/config').SECRET_KEY;
+    var ProductModel = require('./product.module')().ProductModel;
 
     module.exports = {
-        registerUser: registerUser,
-        updateUser: updateUser,
-        loginUser: loginUser,
-        deleteProfile: deleteProfile,
-        getUser: getUser
+        createProduct: createProduct,
+        updateProduct: updateProduct,
+        getProduct: getProduct,
+        deleteProduct: deleteProduct
     };
 
-    var bcrypt = require('bcryptjs');
-    var UserModel = require('./auth.module')().UserModel;
+    // Función para crear un producto
+    async function createProduct(productData) {
+        var existingProduct = await ProductModel.findOne({ name: productData.name });
+        if (existingProduct) {
+            throw new Error('El producto ya existe');
+        }
 
-    async function getUser(id) {
+        var newProduct = new ProductModel(productData);
+        return newProduct.save();
+    }
+
+    // Función para obtener un producto por ID
+    async function getProduct(id) {
         try {
-            return await UserModel.findById(id).select('-password');
+            return await ProductModel.findById(id);
         } catch (error) {
             return null;
         }
     }
 
-    async function registerUser(userData) {
-        var existingUser = await UserModel.findOne({ email: userData.email });
-        if (existingUser) {
-            throw new Error('El email ya está en uso');
-        }
-        userData.password = hashPassword(userData.password);
-        var newUser = new UserModel(userData);
-        return newUser.save();
-    }
-
-    function updateUser(userId, user) {
-        if (user.password) {
-            user.password = hashPassword(user.password);
-        }
-        return UserModel
-            .findByIdAndUpdate(userId, user, { new: true })
+    // Función para actualizar un producto
+    function updateProduct(productId, productData) {
+        return ProductModel
+            .findByIdAndUpdate(productId, productData, { new: true })
             .exec();
     }
 
-    function loginUser(email, password) {
-        return UserModel.findOne({ email }).exec()
-            .then(user => {
-                if (!user || !comparePassword(password, user.password)) {
-                    throw new Error('Credenciales inválidas');
+    // Función para eliminar un producto
+    function deleteProduct(productId) {
+        return ProductModel.findByIdAndDelete(productId)
+            .exec()
+            .then(deletedProduct => {
+                if (!deletedProduct) {
+                    const error = new Error('Producto no encontrado');
+                    error.status = 404;
+                    throw error;
                 }
-                var token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
-                user = user.toObject();
-                delete user.password;
-                return { token, user };
+
+                return {
+                    message: 'Producto eliminado exitosamente',
+                    product: deletedProduct
+                };
             });
     }
-
-    function deleteProfile(userId) {
-        return UserModel.findByIdAndDelete(userId)
-            .exec()
-            .then(deletedUser => {
-                if (!deletedUser) {
-                    const error = new Error('User not found')
-                    error.status = 404
-                    throw error
-                }
-
-                deletedUser = deletedUser.toObject()
-                delete deletedUser.password
-                return {
-                    message: 'Profile deleted successfully',
-                    user: deletedUser
-                }
-            })
-    }
-
-    function hashPassword(password) {
-        return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-    }
-
-    function comparePassword(password, hash) {
-        return bcrypt.compareSync(password, hash);
-    }
-
 })();
