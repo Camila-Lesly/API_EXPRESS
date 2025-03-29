@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      MONGO_INITDB_DATABASE: ApiExpress
+
+#Se ha usado mongodb compass para visualizar la base de datos y postman para comprobar las peticiones
+# http://localhost:3000/api/auth/register ejemplo para probar cada ruta de la api
+# Se ejecuta con npm run start
+# Tener instalado mongodb y nodejs
+# npm i 

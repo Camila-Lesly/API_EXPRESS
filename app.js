@@ -9,15 +9,45 @@ var app = express();
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 
 var AuthController = require('./modules/auth/auth.module')().AuthController;
+var ProductController = require('./modules/product/product.module')().ProductController;
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+
+const cors = require('cors');
+
+// Configuración de CORS
+app.use(cors({
+  origin: 'http://localhost:3000',  // Cambia este valor si tu frontend corre en otro puerto
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'APIExpress',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./modules/auth/*controller.js','./modules/product/*controller.js'],
+};
+const swaggerSpec = swaggerJsdoc(options);
+
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 MongoDBUtil.init();
 
 app.use('/api/auth', AuthController);
+app.use('/api/product', ProductController);
 
 app.get('/', function (req, res) {
     var pkg = require(path.join(__dirname, 'package.json'));

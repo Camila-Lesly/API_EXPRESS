@@ -1,0 +1,20 @@
+/* RegisterModal.scss */
+
+/* Estilo para hacer el modal más ancho */
+.custom-modal {
+    max-width: 600px !important;  /* Hacer el modal más ancho */
+    width: 100% !important;
+    padding: 2rem !important;
+    top: -5%;
+  }
+  
+  /* Toasts - Posicionarlos en la parte derecha de la pantalla */
+  .custom-toast .chakra-toast {
+    position: fixed;
+    top: 20px;  /* Alejar un poco desde la parte superior */
+    right: 20px;  /* Ubicarlo a la derecha */
+    z-index: 9999;  /* Asegurarnos de que aparezca por encima de todo */
+    width: auto;
+    max-width: 400px; /* Ancho máximo para el toast */
+  }
+  
