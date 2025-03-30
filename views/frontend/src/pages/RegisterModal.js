@@ -37,37 +37,37 @@ const RegisterModal = ({ isOpen, onClose }) => {
       <Modal isOpen={isOpen} onClose={onClose} className="custom-modal">  {/* Aplica la clase personalizada */}
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Registro</ModalHeader>
+          <ModalHeader fontFamily={'Nixie One'}>Registro</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleRegister}>
               <Stack spacing={4}>
                 <FormControl id="firstName" isRequired>
-                  <FormLabel>Nombre</FormLabel>
+                  <FormLabel fontFamily={'Nixie One'}>Nombre</FormLabel>
                   <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                 </FormControl>
   
                 <FormControl id="lastName" isRequired>
-                  <FormLabel>Apellido</FormLabel>
+                  <FormLabel fontFamily={'Nixie One'}>Apellido</FormLabel>
                   <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                 </FormControl>
   
                 <FormControl id="email" isRequired>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel fontFamily={'Nixie One'}>Email</FormLabel>
                   <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </FormControl>
   
                 <FormControl id="password" isRequired>
-                  <FormLabel>Contraseña</FormLabel>
+                  <FormLabel fontFamily={'Nixie One'}>Contraseña</FormLabel>
                   <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </FormControl>
   
                 <FormControl id="confirmPassword" isRequired>
-                  <FormLabel>Confirmar Contraseña</FormLabel>
+                  <FormLabel fontFamily={'Nixie One'}>Confirmar Contraseña</FormLabel>
                   <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                 </FormControl>
   
-                <Button type="submit" colorScheme="green">Registrarse</Button>
+                <Button type="submit" colorScheme="green" fontFamily={'Nixie One'}>Registrarse</Button>
               </Stack>
             </form>
           </ModalBody>
