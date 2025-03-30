@@ -8,6 +8,7 @@
         getProduct: getProduct,
         getProducts: getProducts,
         deleteProduct: deleteProduct,
+        
     };
 
     var ProductService = require('./product.module')().ProductService;
