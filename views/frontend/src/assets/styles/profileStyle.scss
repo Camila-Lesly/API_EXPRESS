@@ -1,0 +1,29 @@
+body {
+    font-family: 'Nixie One', sans-serif !important;
+}
+
+.header {
+    background-color: #88AD96;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; // Alinea a la derecha
+    gap: 16px; // Espacio entre elementos
+    padding: 8px 16px;
+
+}
+
+.header-button {
+    background-color: transparent;
+    padding: 0px 10px;
+    color: #266838;
+    size: 20px;
+    cursor: pointer;
+    &:hover {
+        transition: 0.3s;
+        background-color: #266838;
+        color: #88AD96;
+        border-radius: 10px;
+      }
+}
+
