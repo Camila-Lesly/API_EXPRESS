@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const response = await axios.post("http://localhost:3000/api/auth/login", { email, password });
       console.log("Login exitoso:", response.data);
       localStorage.setItem("token", response.data.token);  // Guardamos el token en el localStorage
       navigate("/dashboard");  // Redirigimos a otra página, por ejemplo, el dashboard

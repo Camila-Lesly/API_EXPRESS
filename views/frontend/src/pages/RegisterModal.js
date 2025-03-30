@@ -14,7 +14,7 @@ const RegisterModal = ({ isOpen, onClose }) => {
     const handleRegister = async (e) => {
       e.preventDefault();
       try {
-        const response = await axios.post("http://localhost:5000/api/auth/register", { firstName, lastName, email, password, confirmPassword });
+        const response = await axios.post("http://localhost:3000/api/auth/register", { firstName, lastName, email, password, confirmPassword });
         console.log("Registro exitoso:", response.data);
         localStorage.setItem("token", response.data.token);
         onClose(); // Cierra el modal tras el registro exitoso

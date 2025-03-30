@@ -49,13 +49,9 @@ MongoDBUtil.init();
 app.use('/api/auth', AuthController);
 app.use('/api/product', ProductController);
 
-app.get('/', function (req, res) {
-    var pkg = require(path.join(__dirname, 'package.json'));
-    res.json({
-        name: pkg.name,
-        version: pkg.version,
-        status: 'up'
-    });
+app.use(express.static(path.join(__dirname, './views/frontend/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './views/frontend/build', 'index.html'));
 });
 
 // catch 404 and forward to error handler
