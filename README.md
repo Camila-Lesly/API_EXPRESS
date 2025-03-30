@@ -9,6 +9,12 @@
 
 A full-stack application for product management and user authentication built as a class project. The backend API is developed with Express and documented with Swagger, while the frontend is built with React.
 
+## Demo
+
+Check out the live demo of the application at: [https://sigepro.makerlab.tech/](https://sigepro.makerlab.tech/)
+
+API documentation is available at: [https://sigepro.makerlab.tech/api-docs/](https://sigepro.makerlab.tech/api-docs/)
+
 ---
 
 ## Table of Contents
