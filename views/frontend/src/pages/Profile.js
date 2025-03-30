@@ -37,15 +37,22 @@ useEffect(() => {
         try {
             const token = localStorage.getItem('token');
             console.log('Token almacenado:', token)
+
             const response = await axios.get('http://localhost:5000/api/auth/profile', {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` }   
             });
             
+            console.log('Respuesta completa:', response); // Inspecciona la estructura real
+            console.log('Datos recibidos:', response.data); 
+
+            // Versión segura que maneja cualquier estructura de respuesta
+            const userData = response.data.user || response.data || {};
+
             setUserData({
-                firstName: response.data.user.firstName,
-                lastName: response.data.user.lastName,
-                email: response.data.user.email,
-                password: ""
+                firstName: userData.firstName || '',
+                lastName: userData.lastName || '',
+                email: userData.email || '',
+                password: ''
             });
         } catch (error) {
             console.error('Error cargando perfil:', error);
@@ -75,60 +82,77 @@ useEffect(() => {
 
 // Guardar cambios
 const handleSaveChanges = async () => {
-    if (editingField === 'password' && tempValue !== confirmValue) {
-        toast({
-            title: "Error",
-            description: "Las contraseñas no coinciden",
-            status: "error",
-            duration: 5000,
-            isClosable: true
-        });
-        return;
-    }
-
-    setIsLoading(true);
     try {
-        const token = localStorage.getItem("token");
-        let endpoint = "http://localhost:5000/api/auth/update-profile";
-        let payload = { [editingField]: tempValue };
-
-        if (editingField === 'password') {
-            endpoint = "http://localhost:5000/api/auth/update-password";
-            payload = { password: tempValue };
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            throw new Error('No hay token de autenticación');
         }
 
-        await axios.put(endpoint, payload, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        // Validación para contraseña
+        if (editingField === 'password') {
+            if (!tempValue || tempValue.length < 6) {
+                throw new Error('La contraseña debe tener al menos 6 caracteres');
+            }
 
-        // Actualizar estado local sin incluir la contraseña
-        setUserData(prev => ({
-            ...prev,
-            [editingField]: editingField === 'password' ? '' : tempValue
-        }));
+            if (tempValue !== confirmValue) {
+                throw new Error('Las contraseñas no coinciden');
+            }
+
+            const response = await axios.put(
+                'http://localhost:5000/api/auth/update-password',
+                { password: tempValue },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            console.log('Respuesta del servidor:', response.data);
+        } else {
+            // Lógica para otros campos
+            const response = await axios.put(
+                'http://localhost:5000/api/auth/update-profile',
+                { [editingField]: tempValue },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            console.log('Respuesta del servidor:', response.data);
+        }
 
         toast({
-            title: "Actualizado",
-            description: `Tu ${getFieldLabel(editingField)} se ha actualizado correctamente`,
-            status: "success",
+            title: 'Éxito',
+            description: `Actualización exitosa`,
+            status: 'success',
             duration: 3000,
             isClosable: true
         });
 
         onClose();
     } catch (error) {
-        console.error("Error actualizando:", error);
+        console.error('Error detallado:', error);
+        
         toast({
-            title: "Error",
-            description: error.response?.data?.message || "Error al actualizar",
-            status: "error",
+            title: 'Error',
+            description: error.response?.data?.message || error.message,
+            status: 'error',
             duration: 5000,
             isClosable: true
         });
-    } finally {
-        setIsLoading(false);
+
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
     }
 };
+
 
   // Etiquetas para los campos
   const getFieldLabel = (field) => {
