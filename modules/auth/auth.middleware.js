@@ -18,30 +18,30 @@
     function validateRegisterData(req, res, next) {
         const { firstName, lastName, email, password, confirmPassword } = req.body;
         if (!firstName || !lastName || !email || !password || !confirmPassword) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+            return res.status(400).json({ message: 'All fields are required.' });
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
-                message: 'La contraseña debe tener al menos 6 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial.'
+                message: 'The password must be at least 6 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.'
             });
         }
 
         if (!validator.isEmail(email)) {
-            return res.status(400).json({ message: 'El correo electrónico no es válido.' });
+            return res.status(400).json({ message: 'The email is not valid.' });
         }
 
 
         if (password.length > 20) {
             return res.status(400).json({
-                message: 'La contraseña no puede exceder los 20 caracteres.'
+                message: 'The password must not exceed 20 characters.'
             });
         }
 
         if (password !== confirmPassword) {
             return res.status(400).json({
-                message: 'Las contraseñas no coinciden.'
+                message: 'The passwords do not match.'
             });
         }
 
@@ -85,7 +85,7 @@
     function loginUser(req, res, next) {
         var { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).json({ message: "Email y contraseña son requeridos" });
+            return res.status(400).json({ message: "Email and password are required" });
         }
 
         AuthService.loginUser(email, password)
@@ -98,7 +98,7 @@
         }
 
         function error(err) {
-            res.status(401).json({ message: "Credenciales inválidas" });
+            res.status(401).json({ message: "Invalid credentials" });
         }
     }
 
@@ -106,12 +106,12 @@
         const authHeader = req.headers.authorization;
         const token = authHeader && authHeader.split(' ')[1];
         if (!token) {
-            return res.status(401).json({ message: 'Token no proporcionado' });
+            return res.status(401).json({ message: 'Token no found' });
         }
 
         jwt.verify(token, SECRET_KEY, (err, decoded) => {
             if (err) {
-                return res.status(401).json({ message: 'Token inválido' });
+                return res.status(401).json({ message: 'Invalid token' });
             }
 
             req.userId = decoded.id;

@@ -15,7 +15,7 @@
     function validateProductData(req, res, next) {
         const { name, description, price } = req.body;
         if (!name || !description || !price) {
-            return res.status(400).json({ message: 'Los campos nombre, descripción y precio son obligatorios.' });
+            return res.status(400).json({ message: 'The name, description, and price fields are required.' });
         }
 
         next();
@@ -27,11 +27,11 @@
         ProductService.getProduct(productId)
             .then(product => {
                 if (!product) {
-                    return res.status(404).json({ message: 'Producto no encontrado.' });
+                    return res.status(404).json({ message: 'Product not found.' });
                 }
 
                 if (product.owner != userId) {
-                    return res.status(403).json({ message: 'No tienes permiso para realizar esta acción.' });
+                    return res.status(403).json({ message: 'You do not have permission to access this product.' });
                 }
 
                 next();

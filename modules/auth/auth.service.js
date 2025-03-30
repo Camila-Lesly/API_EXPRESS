@@ -28,7 +28,7 @@
     async function registerUser(userData) {
         var existingUser = await UserModel.findOne({ email: userData.email });
         if (existingUser) {
-            throw new Error('El email ya está en uso');
+            throw new Error('The email is already registered');
         }
         userData.password = hashPassword(userData.password);
         var newUser = new UserModel(userData);
@@ -48,7 +48,7 @@
         return UserModel.findOne({ email }).exec()
             .then(user => {
                 if (!user || !comparePassword(password, user.password)) {
-                    throw new Error('Credenciales inválidas');
+                    throw new Error('Invalid email or password');
                 }
                 var token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
                 user = user.toObject();

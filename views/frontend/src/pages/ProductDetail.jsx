@@ -85,7 +85,7 @@ const ProductDetail = () => {
         
         <div className="product-info">
           <p className="product-description">{product.description}</p>
-          <p className="product-price">Price: ${product.price}</p>
+          <p className="product-price">Price: €{product.price}</p>
           {/* Add more product details as needed */}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const MAX_FILE_SIZE = 256 * 1024; // 256KB in bytes
+const MAX_FILE_SIZE = 100 * 1024; // 256KB in bytes
 
 const ImageUpload = ({ onImageChange, initialImage = null }) => {
   const [previewUrl, setPreviewUrl] = useState(initialImage);
@@ -20,7 +20,7 @@ const ImageUpload = ({ onImageChange, initialImage = null }) => {
     
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
-      setError(`Image size must be less than 256KB. Current size: ${(file.size / 1024).toFixed(2)}KB`);
+      setError(`Image size must be less than 100KB. Current size: ${(file.size / 1024).toFixed(2)}KB`);
       return;
     }
     
@@ -47,7 +47,7 @@ const ImageUpload = ({ onImageChange, initialImage = null }) => {
   return (
     <div className="image-upload-container">
       <div className="form-group">
-        <label htmlFor="product-image">Product Image (Max 256KB)</label>
+        <label htmlFor="product-image">Product Image (Max 100KB)</label>
         <input
           type="file"
           id="product-image"
