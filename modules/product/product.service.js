@@ -7,6 +7,7 @@
         createProduct: createProduct,
         updateProduct: updateProduct,
         getProduct: getProduct,
+        getProducts: getProducts,
         deleteProduct: deleteProduct
     };
 
@@ -19,6 +20,15 @@
 
         var newProduct = new ProductModel(productData);
         return newProduct.save();
+    }
+
+    // Función para obtener todos los productos de un usuario
+    async function getProducts(userId) {
+        try {
+            return await ProductModel.find({ owner: userId });
+        } catch (error) {
+            return [];
+        }
     }
 
     // Función para obtener un producto por ID

@@ -44,7 +44,7 @@
     async function updateProduct(req, res, next) {
         try {
             req.body.owner = req.userId
-            const data = await ProductService.updateProduct(req.userId, req.body)
+            const data = await ProductService.updateProduct(req.params.id, req.body)
             req.response = data
             next()
         } catch (err) {
@@ -56,7 +56,7 @@
     async function getProduct(req, res, next) {
         try {
             const data = await ProductService.getProduct(req.params.id)
-            req.product = data
+            req.response = data
             next()
         } catch (err) {
             err.status = err.status || 500

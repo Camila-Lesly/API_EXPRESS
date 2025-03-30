@@ -26,7 +26,7 @@
      *       200:
      *         description: Lista de productos
      */
-    router.get('/product', AuthMiddleware.guardLogin,
+    router.get('/', AuthMiddleware.guardLogin,
         ProductMiddleware.getProducts,
         function (req, res) {
             res.status(200).json(req.response);
@@ -50,7 +50,7 @@
      *       404:
      *         description: Producto no encontrado
      */
-    router.get('/product/:id', AuthMiddleware.guardLogin, 
+    router.get('/:id', AuthMiddleware.guardLogin, 
         ProductMiddleware.validateUserOwnsProduct,
         ProductMiddleware.getProduct,
         function (req, res) {
@@ -75,10 +75,11 @@
      *       400:
      *         description: Error en los datos de registro
      */
-    router.post('/product', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
+    router.post('/', AuthMiddleware.guardLogin, ProductMiddleware.validateProductData, async function (req, res, next) {
         try {
-            const user = await ProductService.re(req.body);
-            res.status(201).json({ message: 'Usuario registrado exitosamente', user });
+            req.body.owner = req.userId
+            const product = await ProductService.createProduct(req.body);
+            res.status(201).json(product);
         } catch (err) {
             next(err);
         }
@@ -86,7 +87,7 @@
 
     /**
      * @swagger
-     * /api/product/:productId:
+     * /api/product/:id:
      *   patch:
      *     summary: Actualiza el perfil del usuario autenticado
      *     tags: [Products]
@@ -104,7 +105,7 @@
      *       401:
      *         description: No autorizado
      */
-    router.patch('/product/:productId',
+    router.patch('/:id',
         AuthMiddleware.guardLogin,
         ProductMiddleware.validateProductData,
         ProductMiddleware.validateUserOwnsProduct,
@@ -131,7 +132,7 @@
      *       404:
      *         description: Producto no encontrado
      */
-    router.delete('/product/:id', 
+    router.delete('/:id', 
         AuthMiddleware.guardLogin, 
         ProductMiddleware.validateUserOwnsProduct,
         ProductMiddleware.deleteProduct, 
