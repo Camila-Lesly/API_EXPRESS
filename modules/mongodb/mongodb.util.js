@@ -11,7 +11,6 @@
 
     function init() {
         var options = {
-            promiseLibrary: require('bluebird'),
             useNewUrlParser: true,
 			useUnifiedTopology: true 
         };
