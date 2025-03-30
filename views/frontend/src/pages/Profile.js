@@ -200,7 +200,7 @@ const handleSaveChanges = async () => {
                             <FormControl key={field}>
                                 <Flex justify="space-between" align="center">
                                     <Box flex={1}>
-                                        <FormLabel>{getFieldLabel(field)}</FormLabel>
+                                        <FormLabel fontWeight={800}>{getFieldLabel(field)}</FormLabel>
                                         <Text>
                                             {field === 'password' ? '••••••••' : userData[field] || `No ${getFieldLabel(field).toLowerCase()}`}
                                         </Text>
@@ -211,6 +211,8 @@ const handleSaveChanges = async () => {
                                         onClick={() => handleEditField(field, userData[field])}
                                         ml={4}
                                         isLoading={isLoading}
+                                        className="edit-button"
+                                        color={'white'}
                                     >
                                         {field === 'password' ? 'Cambiar' : 'Editar'}
                                     </Button>
@@ -261,10 +263,10 @@ const handleSaveChanges = async () => {
                             Cancelar
                         </Button>
                         <Button 
-                            colorScheme="blue" 
                             onClick={handleSaveChanges}
                             isLoading={isLoading}
                             isDisabled={!tempValue.trim() || (editingField === 'password' && !confirmValue.trim())}
+                            className="modal-save-button"
                         >
                             Guardar
                         </Button>
