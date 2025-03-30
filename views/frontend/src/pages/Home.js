@@ -13,12 +13,10 @@ const Home = () => {
     }
   };
 
-  // Función para borrar una lista
-  const borrarLista = (id) => {
+  const eliminarLista = (id) => {
     setListas((prevListas) => prevListas.filter((lista) => lista.id !== id));
   };
 
-  // Función para agregar un producto a la lista
   const agregarProductoALista = (id, producto) => {
     setListas((prevListas) =>
       prevListas.map((lista) =>
@@ -41,14 +39,14 @@ const Home = () => {
               key={lista.id}
               lista={lista}
               agregarProducto={(producto) => agregarProductoALista(lista.id, producto)}
-              borrarLista={() => borrarLista(lista.id)} // Pasamos la función de borrar lista
+              eliminarLista={eliminarLista} // Aquí pasamos la función eliminarLista como prop
             />
           ))}
         </Flex>
 
         {listas.length < 3 && (
           <Button className="add-list-button" onClick={agregarLista}>
-            Agregar tipo lista +
+            Agregar lista +
           </Button>
         )}
       </Container>

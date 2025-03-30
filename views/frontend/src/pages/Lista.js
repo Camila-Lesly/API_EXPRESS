@@ -1,61 +1,76 @@
 import { useState } from "react";
-import { Box, Button, VStack, Text } from "@chakra-ui/react";
-import ModalAgregarProducto from "./ModalAgregarProducto";
-import ModalDetalleProducto from "./ModalDetalleProducto"; // Modal para detalles del producto
+import { Box, Button, VStack, Text, Flex } from "@chakra-ui/react";
+import ModalAgregarProducto from "./ModalAgregarProducto"; // Importamos el nuevo modal
+import ModalDetalleProducto from "./ModalDetalleProducto"; // Modal para detalle
+import "../assets/styles/listaStyle.scss"; // Asegúrate de tener los estilos adecuados
 
-const Lista = ({ lista, agregarProducto, borrarLista }) => {
-  const [productos, setProductos] = useState(lista.productos);
-  const [isOpen, setIsOpen] = useState(false);
+const Lista = ({ lista, agregarProducto, eliminarLista }) => {
+  const [productos, setProductos] = useState([]);
+  const [isOpenAgregar, setIsOpenAgregar] = useState(false); // Estado para el modal de agregar producto
+  const [isOpenDetalle, setIsOpenDetalle] = useState(false); // Estado para el modal de detalle
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Función para abrir y cerrar el modal de agregar producto
-  const abrirModal = () => setIsOpen(true);
-  const cerrarModal = () => setIsOpen(false);
+  const abrirModalAgregar = () => setIsOpenAgregar(true);
+  const cerrarModalAgregar = () => setIsOpenAgregar(false);
 
-  // Función para abrir el modal con los detalles del producto
-  const verDetallesProducto = (producto) => {
+  // Función para abrir y cerrar el modal de detalle
+  const abrirModalDetalle = (producto) => {
     setProductoSeleccionado(producto);
-    setIsModalOpen(true);
+    setIsOpenDetalle(true); // Abrir modal de detalle
   };
+  const cerrarModalDetalle = () => setIsOpenDetalle(false);
 
-  const cerrarModalDetalles = () => {
-    setIsModalOpen(false);
-  };
-
+  // Función para agregar producto
   const agregarProductoALista = (producto) => {
-    agregarProducto(producto);
-    setProductos((prevProductos) => [...prevProductos, producto]); // Agregar producto localmente
-    cerrarModal(); // Cerrar modal después de agregar
+    setProductos([...productos, producto]);
+    agregarProducto(producto); // Llamamos al prop 'agregarProducto' que viene del componente padre
   };
 
   return (
     <Box className="lista-box">
-      <Button className="add-product-button" onClick={abrirModal}>
+      {/* X para eliminar lista */}
+      <Text
+        className="eliminar-lista"
+        onClick={() => eliminarLista(lista.id)} // Llamamos a la función eliminar lista
+      >
+        &times;
+      </Text>
+
+      {/* Lista de productos */}
+      <Button className="add-product-button" onClick={abrirModalAgregar}>
         +
       </Button>
-
-      {/* Botón para borrar la lista */}
-      <Button className="delete-list-button" onClick={borrarLista}>
-        Eliminar Lista
-      </Button>
-
-      <VStack>
+      <VStack spacing={2}>
         {productos.map((producto, index) => (
-          <Box key={index} onClick={() => verDetallesProducto(producto)} cursor="pointer">
-            <Text>{producto.nombre}</Text>
-          </Box>
+          <Flex
+            key={index}
+            className="producto-item"
+            justify="space-between"
+            align="center"
+            w="100%"
+            mb={3}
+            onClick={() => abrirModalDetalle(producto)} // Abre el modal de detalles al hacer clic
+          >
+            <Text className="nombre">{producto.nombre}</Text>
+            <Text className="precio">${producto.precio}</Text>
+          </Flex>
         ))}
       </VStack>
 
       {/* Modal para Agregar Producto */}
-      <ModalAgregarProducto isOpen={isOpen} onClose={cerrarModal} agregarProducto={agregarProductoALista} />
+      <ModalAgregarProducto 
+        isOpen={isOpenAgregar} 
+        onClose={cerrarModalAgregar} 
+        agregarProducto={agregarProductoALista} 
+        usuario={lista.usuario} 
+      />
 
-      {/* Modal para Mostrar Detalles del Producto */}
+      {/* Modal de Detalles del Producto */}
       {productoSeleccionado && (
         <ModalDetalleProducto
-          isOpen={isModalOpen}
-          onClose={cerrarModalDetalles}
+          isOpen={isOpenDetalle}
+          onClose={cerrarModalDetalle}
           producto={productoSeleccionado}
         />
       )}
