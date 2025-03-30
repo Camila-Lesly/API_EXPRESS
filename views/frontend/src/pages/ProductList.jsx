@@ -58,7 +58,7 @@ const ProductList = () => {
               <div className="product-card-content">
                 <h3>{product.name}</h3>
                 <p className="product-description">{product.description}</p>
-                <p className="product-price">${product.price}</p>
+                <p className="product-price">€{product.price}</p>
                 <div className="product-actions">
                   <Link to={`/products/${product._id}`} className="btn btn-secondary">
                     View Details
