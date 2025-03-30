@@ -9,7 +9,8 @@
 /coverage
 
 # production
-/build
+# /build  - For ease of deployment, we include the build folder in the repository. This way the server
+# can be ran without having to build the frontend first.
 
 # misc
 .DS_Store
